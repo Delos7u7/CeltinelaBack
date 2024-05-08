@@ -38,5 +38,6 @@ func main() {
 	}
 	handler := cors.Default().Handler(http.DefaultServeMux)
 	http.HandleFunc("/createUser", UserController.CreateUser)
+	http.HandleFunc("/loginUser", UserController.LoginUser)
 	http.ListenAndServe(":8080", handler)
 }
