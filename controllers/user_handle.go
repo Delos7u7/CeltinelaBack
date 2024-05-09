@@ -5,6 +5,8 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+
+	"github.com/dgrijalva/jwt-go"
 )
 
 type ResponseJson struct {
@@ -14,6 +16,11 @@ type ResponseJson struct {
 
 type UserController struct {
 	UserService models.UserService
+}
+
+type Claims struct {
+	UserID int `json:"userID"`
+	jwt.StandardClaims
 }
 
 func (uc UserController) CreateUser(w http.ResponseWriter, r *http.Request) {
@@ -48,22 +55,38 @@ func (uc UserController) LoginUser(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		fmt.Println(err.Error())
 	}
-	_, err = uc.UserService.Login(userMode.Nombre, userMode.Contrasenia)
+	userID, err := uc.UserService.Login(userMode.Nombre, userMode.Contrasenia)
 	if err != nil {
 		fmt.Println(err.Error())
 	}
 
-	responseLoginUser := ResponseJson{
-		Code:    200,
-		Message: "Usuario Logeado",
+	claims := Claims{
+		UserID:         userID,
+		StandardClaims: jwt.StandardClaims{},
 	}
 
-	loginJson, err := json.Marshal(responseLoginUser)
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+
+	tokenString, err := token.SignedString([]byte("asaksksja"))
 	if err != nil {
-		fmt.Println(err.Error())
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	err = uc.UserService.CrearSesion(userID, tokenString)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	response := map[string]string{"token": tokenString}
+	jsonResponse, err := json.Marshal(response)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
 	}
 
 	w.Header().Set("Content-Type", "application/json")
-	fmt.Println(responseLoginUser)
-	w.Write(loginJson)
+	w.WriteHeader(http.StatusOK)
+	w.Write(jsonResponse)
 }

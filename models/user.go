@@ -52,3 +52,20 @@ func (us UserService) Login(nombre, contrasenia string) (int, error) {
 
 	return usuario.ID, nil
 }
+
+func (us UserService) CrearSesion(ID int, token string) error {
+	var count int
+	err := us.DB.QueryRow("SELECT COUNT(*) FROM sesiones WHERE id_usuario = ?", ID).Scan(&count)
+	if err != nil {
+		return err
+	}
+	if count > 0 {
+		return nil
+	}
+	_, err = us.DB.Exec("INSERT INTO sesiones (id_usuario, token) VALUES (?, ?)", ID, token)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
