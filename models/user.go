@@ -2,6 +2,7 @@ package models
 
 import (
 	"database/sql"
+	"errors"
 	"fmt"
 
 	"golang.org/x/crypto/bcrypt"
@@ -68,4 +69,16 @@ func (us UserService) CrearSesion(ID int, token string) error {
 	}
 
 	return nil
+}
+
+func (us *UserService) ConsultaID(token string) (int, error) {
+	var id int
+	err := us.DB.QueryRow("SELECT id_usuario FROM sesiones WHERE token = ?", token).Scan(&id)
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return 0, fmt.Errorf("token not found: %v", err)
+		}
+		return 0, err
+	}
+	return id, nil
 }

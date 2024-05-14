@@ -45,7 +45,7 @@ func (uc UserController) CreateUser(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.Header().Set("Content-Type", "application/json")
-
+	fmt.Println(userMode)
 	w.Write(usersJson)
 }
 
@@ -68,6 +68,7 @@ func (uc UserController) LoginUser(w http.ResponseWriter, r *http.Request) {
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 
 	tokenString, err := token.SignedString([]byte("asaksksja"))
+	fmt.Println(tokenString)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
