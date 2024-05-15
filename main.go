@@ -16,7 +16,7 @@ var db *sql.DB
 func ConexionBD() (conexion *sql.DB) {
 	Driver := "mysql"
 	Usuario := "root"
-	Contrasenia := "123456"
+	Contrasenia := "itsoeh23"
 	Nombre := "celtinela"
 
 	conexion, err := sql.Open(Driver, Usuario+":"+Contrasenia+"@tcp(127.0.0.1)/"+Nombre)
@@ -64,5 +64,6 @@ func main() {
 	http.HandleFunc("/loginUser", UserController.LoginUser)
 	http.HandleFunc("/createVehicle", VehicleController.CreateVehicle)
 	http.HandleFunc("/getvehicles", VehicleController.GetVehicles)
+	http.HandleFunc("/getVehicle", VehicleController.GetVehicle)
 	http.ListenAndServe(":8080", handler)
 }

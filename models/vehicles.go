@@ -2,6 +2,7 @@ package models
 
 import (
 	"database/sql"
+	"errors"
 	"fmt"
 )
 
@@ -60,4 +61,26 @@ func (vs *VehicleService) SelectVehicles(token string) ([]Vehiculo, error) {
 		VehiculoArray = append(VehiculoArray, Vehiculo)
 	}
 	return VehiculoArray, nil
+}
+
+func (vs *VehicleService) SelectVehicle(token string, idVehiculo int) (Vehiculo, error) {
+	id, err := vs.VehicleService.ConsultaID(token)
+	if err != nil {
+		return Vehiculo{}, err // Devolvemos una estructura Vehiculo vacía y el error
+	}
+
+	var vehiculo Vehiculo // Declaramos una variable para almacenar el vehículo
+
+	// Realizamos la consulta SQL para obtener un único vehículo que coincida con el ID del vehículo y el ID de usuario
+	row := vs.DB.QueryRow("SELECT * FROM Vehículos WHERE id_usuario=? AND id_vehiculo=? LIMIT 1", id, idVehiculo)
+
+	// Escaneamos el resultado de la consulta en la estructura del vehículo
+	if err := row.Scan(&vehiculo.ID, &vehiculo.IDUsuario, &vehiculo.Alias, &vehiculo.Tipo, &vehiculo.Marca, &vehiculo.Modelo, &vehiculo.Año, &vehiculo.Color, &vehiculo.Placa, &vehiculo.NumSerieVIN); err != nil {
+		if err == sql.ErrNoRows {
+			return Vehiculo{}, errors.New("no se encontró el vehículo solicitado para este usuario")
+		}
+		return Vehiculo{}, err // Devolvemos una estructura Vehiculo vacía y el error
+	}
+
+	return vehiculo, nil // Devolvemos el vehículo encontrado y nil como error
 }

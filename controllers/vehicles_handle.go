@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"strconv"
 )
 
 type VehicleController struct {
@@ -61,4 +62,26 @@ func (vc *VehicleController) GetVehicles(w http.ResponseWriter, r *http.Request)
 	w.WriteHeader(http.StatusOK)
 	w.Header().Set("Content-Type", "application/json")
 	w.Write(jsonArrayVehiculos)
+}
+
+func (vc *VehicleController) GetVehicle(w http.ResponseWriter, r *http.Request) {
+	token := r.URL.Query().Get("token")
+	idVehiculoStr := r.URL.Query().Get("idVehiculo")
+	idVehiculo, err := strconv.Atoi(idVehiculoStr)
+	if err != nil {
+		fmt.Println(err.Error())
+	}
+	vehiculo, err := vc.VehicleService.SelectVehicle(token, idVehiculo)
+	if err != nil {
+		http.Error(w, "Error al leer el cuerpo de la solicitud", http.StatusBadRequest)
+		return
+	}
+	jsonVehiculo, err := json.Marshal(vehiculo)
+	if err != nil {
+		fmt.Println("Error al convertir a JSON:", err)
+		return
+	}
+	w.WriteHeader(http.StatusOK)
+	w.Header().Set("Content-Type", "application/json")
+	w.Write(jsonVehiculo)
 }
