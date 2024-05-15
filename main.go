@@ -50,6 +50,14 @@ func main() {
 		VehicleService: VehicleService,
 	}
 
+	DeviceService := &models.DeviceService{
+		DB: db,
+	}
+
+	DeviceController := &controllers.DeviceController{
+		DeviceService: DeviceService,
+	}
+
 	/*c := cors.New(cors.Options{
 		AllowedOrigins:   []string{"http://127.0.0.1:5500"},
 		AllowCredentials: true,
@@ -65,5 +73,6 @@ func main() {
 	http.HandleFunc("/createVehicle", VehicleController.CreateVehicle)
 	http.HandleFunc("/getvehicles", VehicleController.GetVehicles)
 	http.HandleFunc("/getVehicle", VehicleController.GetVehicle)
-	http.ListenAndServe(":8080", handler)
+	http.HandleFunc("/linkDevice", DeviceController.LinkDevice)
+	http.ListenAndServe("0.0.0.0:8080", handler)
 }
