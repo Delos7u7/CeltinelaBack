@@ -16,7 +16,7 @@ var db *sql.DB
 func ConexionBD() (conexion *sql.DB) {
 	Driver := "mysql"
 	Usuario := "root"
-	Contrasenia := "itsoeh23"
+	Contrasenia := "123456"
 	Nombre := "celtinela"
 
 	conexion, err := sql.Open(Driver, Usuario+":"+Contrasenia+"@tcp(127.0.0.1)/"+Nombre)

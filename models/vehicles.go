@@ -81,6 +81,6 @@ func (vs *VehicleService) SelectVehicle(token string, idVehiculo int) (Vehiculo,
 		}
 		return Vehiculo{}, err // Devolvemos una estructura Vehiculo vacía y el error
 	}
-
+	fmt.Println("Fila escaneada:", vehiculo)
 	return vehiculo, nil // Devolvemos el vehículo encontrado y nil como error
 }
