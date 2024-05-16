@@ -58,6 +58,14 @@ func main() {
 		DeviceService: DeviceService,
 	}
 
+	AlertService := &models.AlertService{
+		AlertService: DeviceService,
+		DB:           db,
+	}
+
+	AlertController := &controllers.AlertController{
+		AlertService: AlertService,
+	}
 	/*c := cors.New(cors.Options{
 		AllowedOrigins:   []string{"http://127.0.0.1:5500"},
 		AllowCredentials: true,
@@ -74,5 +82,7 @@ func main() {
 	http.HandleFunc("/getvehicles", VehicleController.GetVehicles)
 	http.HandleFunc("/getVehicle", VehicleController.GetVehicle)
 	http.HandleFunc("/linkDevice", DeviceController.LinkDevice)
+	http.HandleFunc("/createAlert", AlertController.CreateAlert)
+	http.HandleFunc("/getAlerts", AlertController.GetAlerts)
 	http.ListenAndServe("0.0.0.0:8080", handler)
 }

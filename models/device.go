@@ -2,6 +2,7 @@ package models
 
 import (
 	"database/sql"
+	"errors"
 	"fmt"
 	"strconv"
 )
@@ -31,4 +32,16 @@ func (dv DeviceService) LinkDevice(d Device) error {
 		return err
 	}
 	return nil
+}
+
+func (dv DeviceService) GetIDDevice(id_vehiculo int) (int, error) {
+	var id int
+	err := dv.DB.QueryRow("SELECT id_dispositivo FROM dispositivos WHERE id_vehiculo=?", id_vehiculo).Scan(&id)
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return 0, fmt.Errorf("id not found: %v", err)
+		}
+		return 0, err
+	}
+	return id, nil
 }
