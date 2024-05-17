@@ -60,7 +60,7 @@ func (ac AlertController) GetAlerts(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	alert, err := ac.AlertService.ShowAlert(id_vehiculo)
+	alert, err := ac.AlertService.ShowAlerts(id_vehiculo)
 	if err != nil {
 		fmt.Println(err.Error())
 		http.Error(w, "Error al obtener la alerta", http.StatusInternalServerError)
@@ -77,4 +77,33 @@ func (ac AlertController) GetAlerts(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 	w.Header().Set("Content-Type", "application/json")
 	w.Write(jsonAlert)
+}
+
+func (ac AlertController) ChangeAlertState(w http.ResponseWriter, r *http.Request) {
+	id_vehiculostr := r.URL.Query().Get("id_vehiculo")
+	id_vehiculo, err := strconv.Atoi(id_vehiculostr)
+	if err != nil {
+		fmt.Println(err.Error())
+		http.Error(w, "Error al obtener el ID del vehículo", http.StatusBadRequest)
+		return
+	}
+
+	err = ac.AlertService.ChangeAlertState(id_vehiculo)
+	if err != nil {
+		fmt.Println(err.Error())
+	}
+
+	responseChangeAlertState := ResponseJson{
+		Code:    200,
+		Message: "Estado cambiado",
+	}
+
+	jsonResponseChangeAlertState, err := json.Marshal(responseChangeAlertState)
+
+	if err != nil {
+		fmt.Println(err.Error())
+	}
+
+	w.Header().Set("Content-type", "application/json")
+	w.Write(jsonResponseChangeAlertState)
 }

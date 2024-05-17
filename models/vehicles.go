@@ -29,12 +29,10 @@ func (vs *VehicleService) CreateVehicle(v Vehiculo, token string) error {
 	fmt.Println("1.5 ", token)
 	id, err := vs.VehicleService.ConsultaID(token)
 	if err != nil {
-		//fmt.Println(err.Error())
 		return err
 	}
 	_, err = vs.DB.Exec("INSERT INTO Vehículos (id_usuario, alias_vehiculo, tipo_vehiculo, marca, modelo, año, color, placa, num_serie_vin) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)", id, v.Alias, v.Tipo, v.Marca, v.Modelo, v.Año, v.Color, v.Placa, v.NumSerieVIN)
 	if err != nil {
-		//fmt.Println(err.Error())
 		return err
 	}
 	return nil
@@ -45,7 +43,6 @@ func (vs *VehicleService) SelectVehicles(token string) ([]Vehiculo, error) {
 	if err != nil {
 		return nil, err
 	}
-	//var Vehiculo Vehiculo
 	var VehiculoArray []Vehiculo
 	rows, err := vs.DB.Query("SELECT * FROM Vehículos WHERE id_usuario=?", id)
 	if err != nil {

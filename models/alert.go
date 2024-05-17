@@ -27,20 +27,40 @@ func (as *AlertService) CreateAlert(id_dispositivo int, latitud float64, longitu
 	return nil
 }
 
-func (as *AlertService) ShowAlert(id_vehiculo int) (Alert, error) {
+func (as *AlertService) ShowAlerts(id_vehiculo int) ([]Alert, error) {
 	id_dispositivo, err := as.AlertService.GetIDDevice(id_vehiculo)
 	if err != nil {
 		fmt.Println(err.Error())
-		return Alert{}, err
 	}
 
-	var alert Alert
-	row := as.DB.QueryRow("SELECT * FROM alertas WHERE id_dispositivo=?", id_dispositivo)
-	err = row.Scan(&alert.ID, &alert.IDDispositivo, &alert.Latitud, &alert.Longitud, &alert.Fecha_Alerta, &alert.Estado)
+	var AlertArray []Alert
+	rows, err := as.DB.Query("SELECT * FROM alertas WHERE id_dispositivo=? AND estado='0' ORDER BY fecha_hora DESC", id_dispositivo)
 	if err != nil {
-		fmt.Println("Error al escanear:", err)
-		return Alert{}, err
+		return nil, err
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var Alert Alert
+		if err := rows.Scan(&Alert.ID, &Alert.IDDispositivo, &Alert.Latitud, &Alert.Longitud, &Alert.Fecha_Alerta, &Alert.Estado); err != nil {
+			fmt.Println("Error al escanear:", err)
+			return nil, err
+		}
+		AlertArray = append(AlertArray, Alert)
+	}
+	return AlertArray, nil
+}
+
+func (as *AlertService) ChangeAlertState(id_vehiculo int) error {
+	id_dispositivo, err := as.AlertService.GetIDDevice(id_vehiculo)
+	if err != nil {
+		fmt.Println(err.Error())
 	}
 
-	return alert, nil
+	_, err = as.DB.Exec("UPDATE alertas SET estado = '1' WHERE id_dispositivo = ?", id_dispositivo)
+
+	if err != nil {
+		fmt.Println(err.Error())
+	}
+	return nil
 }
