@@ -14,6 +14,12 @@ type ResponseJson struct {
 	Message string `json:"message"`
 }
 
+type ResponseJsonNumber struct {
+	Code     int    `json:"code"`
+	Message  string `json:"message"`
+	Telefono string `json:"telefono"`
+}
+
 type UserController struct {
 	UserService models.UserService
 }

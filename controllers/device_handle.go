@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"strconv"
 )
 
 type DeviceController struct {
@@ -46,4 +47,30 @@ func (dc DeviceController) LinkDevice(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "application/json")
 	w.Write(deviceJson)
+}
+
+func (dc DeviceController) GetNumber(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("Entró al controlador")
+	id_dispositivostr := r.URL.Query().Get("id_dispositivo")
+	id_dispositivo, err := strconv.Atoi(id_dispositivostr)
+	if err != nil {
+		fmt.Println(err.Error())
+	}
+	numero, err := dc.DeviceService.GetNumber(id_dispositivo)
+	if err != nil {
+		fmt.Println(err.Error())
+	}
+	responseGetNumberDevice := ResponseJsonNumber{
+		Code:     200,
+		Message:  "Número Obtenido",
+		Telefono: numero,
+	}
+
+	getNumberJson, err := json.Marshal(responseGetNumberDevice)
+	if err != nil {
+		fmt.Println(err.Error())
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	w.Write(getNumberJson)
 }

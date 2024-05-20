@@ -95,5 +95,6 @@ func main() {
 	http.HandleFunc("/getAlerts", AlertController.GetAlerts)
 	http.HandleFunc("/changeAlertState", AlertController.ChangeAlertState)
 	http.HandleFunc("/notification", NotificationController.Notification)
+	http.HandleFunc("/getNumber", DeviceController.GetNumber)
 	http.ListenAndServe("0.0.0.0:8080", handler)
 }
