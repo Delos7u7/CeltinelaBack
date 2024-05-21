@@ -14,6 +14,7 @@ type User struct {
 	Correo        string `json:"correo"`
 	Contrasenia   string `json:"contrasenia"`
 	FechaRegistro string `json:"fecha_registro"`
+	Token         string `json:"token"`
 }
 
 type UserService struct {
@@ -81,4 +82,13 @@ func (us *UserService) ConsultaID(token string) (int, error) {
 		return 0, err
 	}
 	return id, nil
+}
+
+func (us *UserService) CerrarSesion(token string) error {
+	fmt.Println("Este es el token: " + token)
+	_, err := us.DB.Exec("DELETE FROM sesiones WHERE token=?", token)
+	if err != nil {
+		fmt.Println(err.Error())
+	}
+	return nil
 }

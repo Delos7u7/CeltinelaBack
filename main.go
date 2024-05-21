@@ -75,16 +75,17 @@ func main() {
 	NotificationController := &controllers.NotificationController{
 		NotificationService: NotificationService,
 	}
-	/*c := cors.New(cors.Options{
-		AllowedOrigins:   []string{"http://127.0.0.1:5500"},
+	c := cors.New(cors.Options{
+		//AllowedOrigins: []string{"*"},
+		AllowedOrigins:   []string{"http://127.0.0.1:5500", "http://ionic.io.io", "http://192.168.0.32"},
 		AllowCredentials: true,
 		AllowedHeaders:   []string{"Authorization", "Content-Type"},
 		AllowedMethods:   []string{"GET", "POST", "OPTIONS"},
 	})
 
 	// Envuelve tu manejador HTTP con el controlador CORS
-	handler := c.Handler(http.DefaultServeMux)*/
-	handler := cors.Default().Handler(http.DefaultServeMux)
+	handler := c.Handler(http.DefaultServeMux)
+	// handler := cors.Default().Handler(http.DefaultServeMux)
 	http.HandleFunc("/createUser", UserController.CreateUser)
 	http.HandleFunc("/loginUser", UserController.LoginUser)
 	http.HandleFunc("/createVehicle", VehicleController.CreateVehicle)
@@ -96,5 +97,7 @@ func main() {
 	http.HandleFunc("/changeAlertState", AlertController.ChangeAlertState)
 	http.HandleFunc("/notification", NotificationController.Notification)
 	http.HandleFunc("/getNumber", DeviceController.GetNumber)
+	http.HandleFunc("/logout", UserController.CerrarSesion)
+	http.HandleFunc("/saludar", UserController.Saludar)
 	http.ListenAndServe("0.0.0.0:8080", handler)
 }
